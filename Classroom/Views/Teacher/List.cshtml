@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Classroom.Models.TeacherModel>
+@{
+    Layout = "_Layout";
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Teachers</h1>
+    
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-table me-1"></i>
+            Active Teachers
+        </div>
+        <div class="card-body">
+            <table id="teachersDataTable">
+                <thead>
+                    <tr>
+                        <th>Firstname</th>
+                        <th>Lastname</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var teacher in Model)
+                    {
+                        <tr>
+                            <td>@teacher.Firstname</td>
+                            <td>@teacher.Lastname</td>
+                            <td>@teacher.Email</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
