@@ -11,12 +11,11 @@
             Active Teachers
         </div>
         <div class="card-body">
-            <table id="teachersDataTable">
+            <table class="table table-bordered table-hover" id="teachersDataTable">
                 <thead>
                     <tr>
-                        <th>Firstname</th>
-                        <th>Lastname</th>
-                        <th>Email</th>
+                        <th scope="col">Firstname</th>
+                        <th scope="col">Lastname</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -25,7 +24,6 @@
                         <tr>
                             <td>@teacher.Firstname</td>
                             <td>@teacher.Lastname</td>
-                            <td>@teacher.Email</td>
                         </tr>
                     }
                 </tbody>
