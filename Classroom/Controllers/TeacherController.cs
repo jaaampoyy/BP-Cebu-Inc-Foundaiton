@@ -9,11 +9,11 @@ namespace Classroom.Controllers
     public class TeacherController : Controller
     {
         private readonly IConfiguration _configuration;
-        private string? connectionString;
+        private string? _connectionString;
         public TeacherController(IConfiguration configuration)
         {
             _configuration = configuration;
-            connectionString = _configuration.GetConnectionString("DefaultConnection")?.ToString();
+            _connectionString = _configuration.GetConnectionString("DefaultConnection")?.ToString();
         }
 
         // GET: TeacherController
@@ -30,10 +30,10 @@ namespace Classroom.Controllers
 
         public ActionResult List()
         {
-            using (SqlConnection conn = new SqlConnection(connectionString))
+            using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
-                string query = "SELECT TeacherId, Firstname, Lastname, Email FROM Teachers";
+                string query = "SELECT TeacherId, Firstname, Lastname FROM Teachers";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
@@ -48,10 +48,9 @@ namespace Classroom.Controllers
                             {
                                 TeacherModel teacher = new TeacherModel
                                 {
-                                    TeacherId = reader.GetInt32(0),
-                                    Firstname = reader.GetString(1),
-                                    Lastname = reader.GetString(2),
-                                    Email = reader.GetString(3)
+                                    TeacherId = reader.GetInt32(reader.GetOrdinal("TeacherId")),
+                                    Firstname = reader.GetString(reader.GetOrdinal("Firstname")),
+                                    Lastname = reader.GetString(reader.GetOrdinal("Lastname")),
                                 };
                                 teachers.Add(teacher);
                             }
@@ -86,7 +85,7 @@ namespace Classroom.Controllers
                 bool isValid = false;
 
                 
-                using (SqlConnection conn = new SqlConnection(connectionString))
+                using (SqlConnection conn = new SqlConnection(_connectionString))
                 {
                     conn.Open();
                     string query = "INSERT INTO Teachers (Firstname, Lastname, Email) VALUES (@firstname, @lastname, @email)";

@@ -1,0 +1,119 @@
+﻿@model Classroom.Models.UserModel
+@{
+    Layout = "_Layout";
+}
+<div class="container-fluid px-4">
+    <h1 class="mt-4">User Details</h1>
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-user me-1"></i>
+            User Information
+        </div>
+        <div class="card-body">
+            @Html.ActionLink("Back to List", "List", "User", null, new { @class = "btn btn-secondary" })
+            <dl class="row">
+                <dt class="col-sm-3">UserId</dt>
+                <dd class="col-sm-9">@Model.UserId</dd>
+                <dt class="col-sm-3">Username</dt>
+                <dd class="col-sm-9">@Model.Username</dd>
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9">@Model.Email</dd>
+                <dt class="col-sm-3">Full Name</dt>
+                <dd class="col-sm-9">@Model.LastLogin</dd>
+                <dt class="col-sm-3">Roles</dt>
+                <dd class="col-sm-9">
+                    <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                        Add Role
+                    </button>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Role Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.UserRoles != null && Model.UserRoles.Any())
+                            {
+                                foreach (var role in Model.UserRoles)
+                                {
+                                    <tr>
+                                        <td>@role</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td>No roles assigned.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                    <!-- Add Role Modal -->
+                    <div class="modal fade" id="addRoleModal" tabindex="-1" aria-labelledby="addRoleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <form method="post" action="@Url.Action("AddRole", "User")">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="addRoleModalLabel">Add Role</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="userId" value="@Model.UserId" />
+                                        <div class="mb-3">
+                                            <label for="roleType" class="form-label">Role Type</label>
+                                            <select class="form-select" id="roleType" name="roleType" onchange="fetchEntities()">
+                                                <option value="">Select Role Type</option>
+                                                <option value="Admin">Admin</option>
+                                                <option value="Teacher">Teacher</option>
+                                                <option value="Student">Student</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="entitySelect" class="form-label">Entity</label>
+                                            <select class="form-select" id="entitySelect" name="entityId">
+                                                <option value="">Select Entity</option>
+                                            </select>
+                                        </div>
+                                        <script>
+                                            function fetchEntities() {
+                                                var roleType = document.getElementById('roleType').value;
+                                                var entitySelect = document.getElementById('entitySelect');
+                                                entitySelect.innerHTML = '<option value="">Loading...</option>';
+                                                if (roleType) {
+                                                    fetch('@Url.Action("GetEntitiesByRoleType", "User")?roleType=' + encodeURIComponent(roleType))
+                                                        .then(response => response.json())
+                                                        .then(data => {
+                                                            entitySelect.innerHTML = '';
+                                                            if (data && data.length > 0) {
+                                                                data.forEach(function (entity) {
+                                                                    var option = document.createElement('option');
+                                                                    option.value = entity.Id;
+                                                                    option.text = entity.Name;
+                                                                    entitySelect.appendChild(option);
+                                                                });
+                                                            } else {
+                                                                entitySelect.innerHTML = '<option value="">No entities found</option>';
+                                                            }
+                                                        })
+                                                        .catch(() => {
+                                                            entitySelect.innerHTML = '<option value="">Error loading entities</option>';
+                                                        });
+                                                } else {
+                                                    entitySelect.innerHTML = '<option value="">Select Entity</option>';
+                                                }
+                                            }
+                                        </script>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn btn-primary">Add Role</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+</div>
